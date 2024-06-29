@@ -36,8 +36,10 @@ columns = 27;
         const rowCells = document.createElement("div");
         rowCells.classList.add("row");
         for(let col = 1; col < columns; col++) {
+            // console.log(`${String.fromCharcode(64 + col)}${row}`);
             const colCell = document.createElement("cite");
             colCell.classList.add("cell");
+            colCell.id = `${String.fromCharCode(64 + col)}${row}`;
             colCell.contentEditable = true;
             rowCells.appendChild(colCell);
         }
