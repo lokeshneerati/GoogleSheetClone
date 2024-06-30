@@ -8,7 +8,7 @@ body{
     grid-template-columns: 40px auto;
     grid-template-rows: 30px auto;
     height: 80vh;
-    width: 100vh;
+    width: full;
     overflow-x: scroll;
     /* margin-top: 20px auto; */
     border: 1px solid #c0c0c0;

@@ -5,13 +5,66 @@ const form = document.getElementById("options-form");
 const expressionInput = document.getElementById("expression");
 
 body.addEventListener("click", (event) => {
+    form.reset();
     if (selectedCell) selectedCell.classList.remove("active-cell");
     selectedCell = event.target;
     activeCellElement.innerText = selectedCell.id;
     selectedCell.classList.add("active-cell");
-    console.log(selectedCell);
+    console.log(state[selectedCell.id]);
+    if(!state[selectedCell.id]) {
+        state[selectedCell.id] = {
+            ...defaultState,
+            innerText: selectedCell.innerText,
+        };
+        return;
+    }
+    // already data present inside state object
+    state[selectedCell.id] ["innerText"] = selectedCell.innerText;
+    // console.log(selectedCell);
+    applyCellInfoToForm();
 });
 
+body.addEventListener("input", (event) =>  {
+    selectedCell = event.target;
+    if(!state[selectedCell.id]) {
+        state[selectedCell.id] = {
+            ...defaultState,
+            innerText: selectedCell.innerText,
+        };
+        return;
+    }
+    // already data present inside state object
+    state[selectedCell.id] ["innerText"] = selectedCell.innerText;
+
+});
+
+function syncFormOptions(selectedCellState) {
+
+
+    // form["fontFamily"].value = selectedCellState.fontFamily;
+    // form["fontSize"].value = selectedCellState.fontSize;
+    // form["isBold"].checked = selectedCellState.isBold;
+    // form["isItalic"].checked = selectedCellState.isItalic;
+    // form["isUnderlined"].checked = selectedCellState.isUnderlined;
+    // form["align"].value = selectedCellState.align;
+    // form["textColor"].value = selectedCellState.textColor;
+    // form["backgroundColor"].value = selectedCellState.backgroundColor;
+    for( let key in selectedCellState) {
+        if(key === "isBold" || key === "isItalic" || key === "isUnderlined") {
+            form[key].checked = selectedCellState[key];
+        } else if(key === "innerText") continue;
+        else form[key].value = selectedCellState[key];
+        // undefined.value = selectedCellState[key]; TypeError
+    }
+}
+function applyCellInfoToForm() {
+    if(!state[selectedCell.id]) {
+        form.reset();
+        return;
+    }
+    console.log(state, state[selectedCell.id]);
+    syncFormOptions(state[selectedCell.id]);
+}
 function applyStylesToSelectedCell(styles) {
     selectedCell.style.fontSize = styles.fontSize + "px";
     selectedCell.style.fontFamily = styles.fontFamily;
@@ -27,7 +80,6 @@ function applyStylesToSelectedCell(styles) {
 
 
 form.addEventListener("change", () => {
-    console.log("change event triggered");
     if (!selectedCell) {
         alert("Please select a cell before making any change on the optons");
         form.reset();
@@ -43,16 +95,17 @@ form.addEventListener("change", () => {
         textColor: form["textColor"].value,
         backgroundColor: form["backgroundColor"].value,
     };
-    console.log({ formData });
+
+    state[selectedCell.id] = {...formData, innerText: selectedCell.innerText};
+
     applyStylesToSelectedCell(formData);
 });
 
 expressionInput.addEventListener("keyup", (event) => {
     if(event.key === "Enter") {
         try {
-            // console.log(event.target.value);
             const expResult = eval(event.target.value);
-            console.log(expResult);
+
             selectedCell.innerText = expResult;
             
         } catch (error) {
@@ -63,3 +116,37 @@ expressionInput.addEventListener("keyup", (event) => {
         }
     }
 });
+
+
+const state = {};
+
+/*
+state: {
+   c4 : {
+      innerText: "Lokesh",
+      isBold: true,
+      isItalic: false,
+      isUnderlined: true,
+      align: 'right,
+      fontSize: 16,
+      fontFamily:default,
+      color:"",
+      backgroundColor: ""
+
+   }
+}
+
+*/
+const defaultState = {
+    innerText: "",
+    isBold: false,
+    isItalic: false,
+    isUnderlined: false,
+    align: "left",
+    fontSize: "16",
+    fontFamily:"default",
+    textColor:"#000000",
+    backgroundColor: "#ffffff",
+
+      
+}
